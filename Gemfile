@@ -23,7 +23,7 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'redis'
 gem 'redis-namespace'
-gem 'bcrypt'
+gem 'bcrypt', '~> 3.1.7'
 gem 'rack-cors'
 gem 'figaro'
 gem 'sprockets', '~>3.0'
