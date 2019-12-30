@@ -1,4 +1,4 @@
-class Api::V1::PostsController < RegisteredController
+class Api::PostsController < RegisteredController
   before_action :set_service
 
   def create

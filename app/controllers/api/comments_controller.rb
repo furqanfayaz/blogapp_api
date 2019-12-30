@@ -1,4 +1,4 @@
-class Api::V1::CommentsController < RegisteredController
+class Api::CommentsController < RegisteredController
   before_action :set_service
 
   def create

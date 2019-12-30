@@ -1,4 +1,4 @@
-class Api::V1::SessionsController < ApplicationController
+class Api::SessionsController < ApplicationController
   before_action :set_service
 
   def create_session

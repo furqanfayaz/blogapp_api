@@ -8,16 +8,16 @@ class SessionService
   end
 
   def self.signup(signup_params)
-    email = signup_params[:email].present? ? signup_params[:email] : raise "Email not present"
+    email = signup_params[:email]
     user = User.where(email: email)
     raise "User already exists" if user.present?
     
     create_params = {
       name: signup_params[:name],
       email: signup_params[:email],
-      password_digest: signup_params[:password]
+      password: signup_params[:password]
     }
-    user = UserDetail.create!(create_params)
+    user = User.create!(create_params)
     
     return {
       success: true,
@@ -26,22 +26,22 @@ class SessionService
   end
 
   def self.create(session_params)
-    email = session_params[:email].present? ? session_params[:email].to_s.downcase : raise "Please provide email"
-    password = session_params[:password].present? ? session_params[:password] : raise "Please provide password"
+    email = session_params[:email].to_s.downcase
+    password = session_params[:password]
 
     user = User.where(email: email).first
-    raise "user with given email is not found"
+    raise "user with given email is not found" if user.blank?
     
-    raise "Bad email/password combination" if !user.authenticate(password)
+    raise "Wrong email/password combination" if !user.authenticate(password)
   
     token = Digest::SHA1.hexdigest([Time.now, rand].join)
 
     # expire after 10 minutes
     $redis.multi do
       $redis.set(user_session_token_key_name(token), user.id)
-      $redis.expire(user_session_token_key_name(token), 10*60)
+      $redis.expire(user_session_token_key_name(token), 60*60)
       $redis.lpush(user_session_id_key_name(user.id), user_session_token_key_name(token))
-      $redis.expire(user_session_id_key_name(user.id), 10*60)
+      $redis.expire(user_session_id_key_name(user.id), 60*60)
     end
 
     return {
@@ -71,7 +71,7 @@ class SessionService
     user_id = $redis.get(user_session_token_key_name(token))
     return nil if user_id.blank?
     
-    user = UserDetail.find(user_id)
+    user = User.find(user_id)
     raise 'User not found' if user.blank?
 
     return user

@@ -11,11 +11,11 @@ Rails.application.routes.draw do
     get  'posts'             =>    'posts#index'
     post 'posts/create'      =>    'posts#create'
     post 'posts/update/:id'  =>    'posts#update'
-    put  'posts/delete/:id'  =>    'posts#create'
+    delete  'posts/delete/:id'  => 'posts#delete'
 
     #commentroutes
     post 'comments/create'      =>    'comments#create'
-    put  'comments/delete/:id'  =>    'comments#delete'
+    delete  'comments/delete/:id'  => 'comments#delete'
 
   end
 end
