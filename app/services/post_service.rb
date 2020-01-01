@@ -3,7 +3,6 @@ class PostService
 
   def self.get_all(params)
     id = params[:id] if params[:id].present?
-
     posts = Post.all
     posts = posts.where(id: id) if id.present?
     posts = posts.order("created_at desc")
