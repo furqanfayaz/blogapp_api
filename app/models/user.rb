@@ -6,5 +6,11 @@ class User < ApplicationRecord
   EMAIL_FORMAT = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   validates :email, presence: true, format: { with: EMAIL_FORMAT }, uniqueness: true
 
+  def self.as_json_query
+    return {
+        only: [:id, :name, :email]
+    }
+  end
+
   has_secure_password
 end

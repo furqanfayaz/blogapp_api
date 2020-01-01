@@ -21,7 +21,7 @@ class SessionService
     
     return {
       success: true,
-      user: user.as_json
+      user: user.as_json(User.as_json_query)
     }
   end
 
@@ -47,7 +47,7 @@ class SessionService
     return {
       success: true,
       token: token,
-      user_details: user.as_json
+      user_details: user.as_json(User.as_json_query)
     }
   end
 

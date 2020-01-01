@@ -1,8 +1,14 @@
 class PostService
+  require "google/cloud/storage"
+
   def self.get_all(params)
+    id = params[:id] if params[:id].present?
+
     posts = Post.all
+    posts = posts.where(id: id) if id.present?
     posts = posts.order("created_at desc")
     count = posts.count
+
     return {
       success: true,
       total: count,
@@ -15,14 +21,16 @@ class PostService
     raise "title is not provided" if title.blank?
     content = params[:content] if params[:content].present?
     raise "content is not provided" if content.blank?
-    media = params[:media] if params[:media].present?
-    raise "media is not provided" if media.blank?
+    file = params[:file] if params[:file].present?
+    raise "file is not provided" if file.blank?
 
+    url = upload_image(file)
+    
     create_params = {
       user_id: current_user.id,
       title: title,
       content: content,
-      media: media
+      media: url
     }
 
     post = Post.create!(create_params)
@@ -42,18 +50,32 @@ class PostService
 
     title = params[:title] if params[:title].present?
     content = params[:content] if params[:content].present?
-    media = params[:media] if params[:media].present?
+    file = params[:file] if params[:file].present?
+
+    url = upload_image(file) if file.present?
 
     update_params = {}
     update_params.merge!(title: title) if title.present?
     update_params.merge!(content: content) if content.present?
-    update_params.merge!(media: media) if media.present?
+    update_params.merge!(media: file.tempfile) if file.present?
     
     post.update_attributes!(update_params)
     return {
       success: true,
       post: post.as_json(Post.as_json_query)
     }
+  end
+
+   def self.upload_image(file)
+    begin
+      bucket_name = Figaro.env.BUCKET_NAME
+      storage = Google::Cloud::Storage.new
+      bucket = storage.bucket bucket_name
+      file = bucket.create_file( file.tempfile, content_type: file.content_type, acl: "public")
+      file.public_url
+    rescue => err
+      raise err
+    end
   end
 
   def self.delete_post(current_user, params)

@@ -3,7 +3,6 @@ class CommentService
     post_id = params[:post_id]
     raise "post id not present" if post_id.blank?
     title = params[:title]
-    raise "title id not present" if title.blank?
     content = params[:content]
     raise "content id not present" if content.blank?
     create_params = {
@@ -21,7 +20,7 @@ class CommentService
 
   def self.delete_comment(current_user, params)
     comment_id = params[:id]
-    raise "id not present" if comment_id.blank?
+    raise "comment id not present" if comment_id.blank?
     comment = Comment.where(id: comment_id).first
     raise "comment with given id not present" if comment.blank?
     raise "You cannot delete this comment" if comment.user_id != current_user.id

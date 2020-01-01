@@ -28,10 +28,10 @@ class Api::PostsController < RegisteredController
   end
 
   def create_params
-    params.permit(:title, :content, :media)
+    params.permit(:title, :content, :file)
   end
 
   def update_params
-    params.permit(:id, :title, :content, :media)
+    params.permit(:id, :title, :content, :file)
   end
 end

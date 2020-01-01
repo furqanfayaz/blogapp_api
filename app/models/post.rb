@@ -14,6 +14,6 @@ class Post < ApplicationRecord
   end
 
   def user_details
-    return self.user.as_json
+    return self.user.as_json(User.as_json_query)
   end
 end
